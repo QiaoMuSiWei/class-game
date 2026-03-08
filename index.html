@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>华容道·草莓引例·全关卡 | 乔木思维工作室</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: #e7d9c5;
+            margin: 0;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .main-panel {
+            width: 1300px;
+            max-width: 95vw;
+            background: #c9ae8b;
+            border-radius: 70px 70px 40px 40px;
+            padding: 35px 30px;
+            box-shadow: 0 20px 0 #7b5f42, 0 30px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            border: 5px solid #ab7e51;
+        }
+        .level-menu {
+            flex: 1.2;
+            min-width: 240px;
+            background: #f2e1c0;
+            border-radius: 50px;
+            padding: 25px 15px;
+            border: 4px solid #b87c44;
+            box-shadow: inset 0 2px 10px #ffe6af, 0 10px 0 #6b4f2e;
+            height: fit-content;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+        .menu-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #392c1b;
+            text-align: center;
+            margin: 0 0 15px;
+            background: #e5c694;
+            border-radius: 40px;
+            padding: 8px 0;
+            border: 2px solid #ac7d3c;
+            box-shadow: 0 5px 0 #76512a;
+        }
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .menu-item {
+            background: #ffefcf;
+            border: 3px solid #bb884b;
+            border-radius: 40px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            padding: 15px 0;
+            color: #3d2c16;
+            box-shadow: 0 6px 0 #886238, 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: 0.07s linear;
+            letter-spacing: 2px;
+        }
+        .menu-item.active {
+            background: #f5c78e;
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #886238;
+            border-color: #9e692e;
+        }
+        .menu-item:hover {
+            background: #fadcab;
+            transform: scale(1.02);
+        }
+        .game-area {
+            flex: 3;
+            min-width: 500px;
+            background: #f8edd9;
+            border-radius: 70px;
+            padding: 30px 30px 40px;
+            border: 5px solid #d6a36b;
+            box-shadow: inset 0 0 0 4px #fcedc5, 0 15px 0 #8a623b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .current-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #2f2a1a;
+            background: #ecdbb6;
+            padding: 10px 40px;
+            border-radius: 70px;
+            border: 3px solid #b87c44;
+            margin: 0 0 25px 0;
+            box-shadow: 0 7px 0 #84602c;
+            display: inline-block;
+            align-self: center;
+        }
+        .big-grid {
+            display: inline-grid;
+            gap: 14px;
+            background: #b87c44;
+            padding: 25px;
+            border-radius: 60px;
+            box-shadow: inset 0 0 0 5px #e9c48b, 0 15px 0 #614124;
+            margin: 5px 0 35px;
+        }
+        .big-cell {
+            width: 100px;
+            height: 100px;
+            background: #fff8e7;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #372913;
+            box-shadow: inset 0 -6px 0 #c99d62, 0 9px 0 #6f4d28;
+            border: 4px solid #f3cf95;
+            cursor: pointer;
+            transition: 0.05s linear;
+            user-select: none;
+        }
+        .big-cell.empty {
+            background: #b59564;
+            box-shadow: inset 0 -6px 0 #836e46, 0 9px 0 #4e3e28;
+            border: 4px solid #876e41;
+            cursor: default;
+            color: transparent;
+        }
+        .big-cell.strawberry {
+            background: #f9c9d0;
+            color: #b3415c;
+            font-size: 4rem;
+            box-shadow: inset 0 -6px 0 #e68a9c, 0 9px 0 #a13e4f;
+            border-color: #f7a5b7;
+        }
+        .big-cell:active:not(.empty) {
+            transform: scale(0.96);
+            box-shadow: inset 0 -3px 0 #c99d62, 0 5px 0 #6f4d28;
+        }
+        .reset-big {
+            background: #e7b87b;
+            border: none;
+            border-radius: 60px;
+            padding: 20px 60px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #342915;
+            border-bottom: 8px solid #8b613b;
+            cursor: pointer;
+            transition: 0.08s;
+            box-shadow: 0 9px 0 #614728;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-top: 10px;
+        }
+        .reset-big:active {
+            transform: translateY(7px);
+            border-bottom-width: 3px;
+            box-shadow: 0 3px 0 #614728;
+        }
+        .footer-remark {
+            margin-top: 20px;
+            color: #5e4129;
+            font-size: 1.2rem;
+            font-style: italic;
+            background: #e7d6b5;
+            padding: 8px 30px;
+            border-radius: 40px;
+            border: 2px solid #b47d47;
+        }
+    </style>
+</head>
+<body>
+<div class="main-panel">
+    <!-- 左侧关卡菜单 -->
+    <div class="level-menu">
+        <div class="menu-title">🗂️ 关 卡</div>
+        <div class="menu-list" id="levelMenuList"></div>
+    </div>
+
+    <!-- 右侧大操作区 -->
+    <div class="game-area">
+        <div class="current-title" id="currentLevelName">引例</div>
+        <div id="bigGridContainer" class="big-grid"></div>
+        <button class="reset-big" id="resetBigBtn">🔄 重 置</button>
+        <div class="footer-remark">点击数字或草莓向空白滑动 · 2移到1右边获胜</div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- 关卡数据 -----
+        const levels = [
+            // 0: 引例 (2行3列)  草莓用"🍓"表示
+            { name: '引例', rows: 2, cols: 3, 
+              init: [[1, "🍓", "🍓"], [null, "🍓", 2]] },
+
+            // 例一组 (3关)  例一、练一、挑一
+            { name: '例一', rows: 2, cols: 3, 
+              init: [[null, 5, 4], [2, 1, 3]] },
+            { name: '练一', rows: 2, cols: 3, 
+              init: [[2, 5, 4], [1, 3, null]] },
+            { name: '挑一', rows: 2, cols: 3, 
+              init: [[2, 1, 5], [4, 3, null]] },
+
+            // 例二组 (4关) 例二、练一、挑一、挑二
+            { name: '例二', rows: 3, cols: 3, 
+              init: [[3, 5, 2], [8, 7, 6], [4, 1, null]] },
+            { name: '练一', rows: 3, cols: 3, 
+              init: [[1, 2, 3], [6, 5, 7], [4, 8, null]] },
+            { name: '挑一', rows: 3, cols: 3, 
+              init: [[2, 6, 7], [5, 4, 3], [8, 1, null]] },
+            { name: '挑二', rows: 3, cols: 3, 
+              init: [[6, 8, 7], [2, 5, 4], [1, 3, null]] },
+
+            // 例三组 (5关) 例三、练一、练二、挑一、挑二
+            { name: '例三', rows: 3, cols: 3, 
+              init: [[5, 2, 7], [6, 4, 3], [8, 1, null]] },
+            { name: '练一', rows: 3, cols: 3, 
+              init: [[3, 1, 2], [4, 5, 6], [7, 8, null]] },
+            { name: '练二', rows: 3, cols: 3, 
+              init: [[1, 2, 5], [3, 4, 6], [7, 8, null]] },
+            { name: '挑一', rows: 3, cols: 3, 
+              init: [[1, 4, 2], [3, 5, 6], [7, 8, null]] },
+            { name: '挑二', rows: 3, cols: 3, 
+              init: [[2, 3, 5], [1, 4, 6], [7, 8, null]] }
+        ];
+
+        // 当前关卡索引
+        let currentLevelIdx = 0;
+
+        // 每个关卡的可变状态 (深拷贝初始值)
+        let currentStates = levels.map(level => deepCopy(level.init));
+
+        // 深拷贝 (支持字符串和数字)
+        function deepCopy(matrix) {
+            return matrix.map(row => row.map(cell => cell));
+        }
+
+        // 获取标准目标矩阵 (数字顺序, 最后一个为null) —— 供没有自定义target的关卡使用
+        function getDefaultTarget(rows, cols) {
+            const target = [];
+            let num = 1;
+            for (let r = 0; r < rows; r++) {
+                const row = [];
+                for (let c = 0; c < cols; c++) {
+                    if (r === rows - 1 && c === cols - 1) row.push(null);
+                    else row.push(num++);
+                }
+                target.push(row);
+            }
+            return target;
+        }
+
+        // 检查当前关卡是否胜利
+        function checkVictory(levelIdx) {
+            const level = levels[levelIdx];
+            const state = currentStates[levelIdx];
+
+            // 引例特殊判定：2在1的右边
+            if (level.name === '引例') {
+                let pos1 = null, pos2 = null;
+                for (let r = 0; r < level.rows; r++) {
+                    for (let c = 0; c < level.cols; c++) {
+                        if (state[r][c] === 1) pos1 = {r, c};
+                        if (state[r][c] === 2) pos2 = {r, c};
+                    }
+                }
+                // 要求1和2都存在，且在同一行，2紧邻1右边
+                return pos1 && pos2 && pos1.r === pos2.r && pos2.c === pos1.c + 1;
+            }
+
+            // 其他关卡使用标准目标矩阵
+            const target = getDefaultTarget(level.rows, level.cols);
+            for (let r = 0; r < level.rows; r++) {
+                for (let c = 0; c < level.cols; c++) {
+                    if (state[r][c] !== target[r][c]) return false;
+                }
+            }
+            return true;
+        }
+
+        // 渲染右侧大操作区
+        function renderBigLevel() {
+            const level = levels[currentLevelIdx];
+            const state = currentStates[currentLevelIdx];
+            const gridContainer = document.getElementById('bigGridContainer');
+            const titleSpan = document.getElementById('currentLevelName');
+
+            titleSpan.textContent = level.name;
+
+            let html = '';
+            for (let r = 0; r < level.rows; r++) {
+                for (let c = 0; c < level.cols; c++) {
+                    const val = state[r][c];
+                    const isEmpty = (val === null || val === undefined);
+                    // 判断是否为草莓
+                    const isStrawberry = (val === "🍓");
+                    const strawberryClass = isStrawberry ? ' strawberry' : '';
+                    html += `<div class="big-cell${isEmpty ? ' empty' : strawberryClass}" data-row="${r}" data-col="${c}">${isEmpty ? '' : val}</div>`;
+                }
+            }
+            gridContainer.innerHTML = html;
+            gridContainer.style.gridTemplateColumns = `repeat(${level.cols}, auto)`;
+
+            if (checkVictory(currentLevelIdx)) {
+                setTimeout(() => {
+                    alert(`🎉 太棒了！ ${level.name} 完成！`);
+                }, 30);
+            }
+        }
+
+        // 移动逻辑
+        function tryMove(levelIdx, row, col) {
+            const level = levels[levelIdx];
+            const state = currentStates[levelIdx];
+            const rows = level.rows;
+            const cols = level.cols;
+
+            // 找空白格
+            let blankRow = -1, blankCol = -1;
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (state[r][c] === null || state[r][c] === undefined) {
+                        blankRow = r; blankCol = c;
+                        break;
+                    }
+                }
+                if (blankRow !== -1) break;
+            }
+
+            const dr = Math.abs(row - blankRow);
+            const dc = Math.abs(col - blankCol);
+            if ((dr === 1 && dc === 0) || (dr === 0 && dc === 1)) {
+                // 交换任意值（数字或草莓）
+                state[blankRow][blankCol] = state[row][col];
+                state[row][col] = null;
+                renderBigLevel();
+            }
+        }
+
+        // 重置当前关卡
+        function resetCurrentLevel() {
+            currentStates[currentLevelIdx] = deepCopy(levels[currentLevelIdx].init);
+            renderBigLevel();
+        }
+
+        // 构建左侧菜单
+        function buildMenu() {
+            const menuList = document.getElementById('levelMenuList');
+            menuList.innerHTML = '';
+            levels.forEach((level, index) => {
+                const item = document.createElement('div');
+                item.className = 'menu-item' + (index === currentLevelIdx ? ' active' : '');
+                item.textContent = level.name;
+                item.dataset.index = index;
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+                    item.classList.add('active');
+                    currentLevelIdx = index;
+                    renderBigLevel();
+                });
+                menuList.appendChild(item);
+            });
+        }
+
+        // 事件监听：大网格点击
+        document.getElementById('bigGridContainer').addEventListener('click', (e) => {
+            const cell = e.target.closest('.big-cell');
+            if (!cell || cell.classList.contains('empty')) return;
+            const row = cell.dataset.row;
+            const col = cell.dataset.col;
+            if (row === undefined || col === undefined) return;
+            tryMove(currentLevelIdx, parseInt(row), parseInt(col));
+        });
+
+        // 重置按钮
+        document.getElementById('resetBigBtn').addEventListener('click', resetCurrentLevel);
+
+        // 初始化
+        buildMenu();
+        renderBigLevel();
+    })();
+</script>
+</body>
+</html>
